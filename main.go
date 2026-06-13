@@ -66,8 +66,84 @@ func main() {
 	var nStudent int = 0
 	var nAttendance int = 0
 
+	SeedDummyData(&nStudent, &nAttendance)
+	
 	scanner := bufio.NewScanner(os.Stdin)
 	MainMenu(scanner, &nStudent, &nAttendance)
+}
+
+// ==============================================================================
+// DUMMY DATA SEEDER (ENTERPRISE GRADE)
+// ==============================================================================
+
+/*
+Subprogram: SeedDummyData
+Description: Mengisi state awal aplikasi dengan data dummy secara langsung.
+             Menerapkan relational mapping untuk memastikan konsistensi data.
+*/
+func SeedDummyData(nS *int, nA *int) {
+	// 1. Deklarasi & Injeksi Data Student
+	dummyStudents := []Student{
+		{NIS: "103032540004", Name: "Elon Musk"},
+		{NIS: "103032540005", Name: "Barack Obama"},
+		{NIS: "103032500177", Name: "Vladimir Putin"},
+		{NIS: "103032500180", Name: "Xi Jinping"},
+		{NIS: "103032540001", Name: "Joe Biden"},
+		{NIS: "103032500153", Name: "Cristiano Ronaldo"},
+		{NIS: "103032500149", Name: "Lionel Messi"},
+		{NIS: "103032540002", Name: "LeBron James"},
+		{NIS: "103032500146", Name: "Michael Jordan"},
+		{NIS: "103032500154", Name: "Bill Gates"}, // Dikoreksi typo menjadi "Bill Gates"
+	}
+
+	for i, s := range dummyStudents {
+		studentData[i] = s
+	}
+	*nS = len(dummyStudents)
+
+	// WAJIB: Sort ascending berdasarkan NIS agar BinarySearchStudent berfungsi normal
+	SortStudentAsc(1, nS)
+
+	// 2. Deklarasi & Injeksi Data Attendance
+	// Menggunakan struct helper anonim agar deklarasi rapi dan clean
+	type seedAtt struct {
+		d, m, y int
+		nis     string
+		pres    bool
+	}
+
+	dummyAttendances := []seedAtt{
+		// Tanggal 01 01 2026
+		{1, 1, 2026, "103032540004", true}, {1, 1, 2026, "103032540005", true}, {1, 1, 2026, "103032500177", true}, {1, 1, 2026, "103032500180", true}, {1, 1, 2026, "103032540001", false},
+		{1, 1, 2026, "103032500153", true}, {1, 1, 2026, "103032500149", false}, {1, 1, 2026, "103032540002", true}, {1, 1, 2026, "103032500146", true}, {1, 1, 2026, "103032500154", false},
+
+		// Tanggal 02 01 2026
+		{2, 1, 2026, "103032540004", false}, {2, 1, 2026, "103032540005", true}, {2, 1, 2026, "103032500177", true}, {2, 1, 2026, "103032500180", true}, {2, 1, 2026, "103032540001", false},
+		{2, 1, 2026, "103032500153", true}, {2, 1, 2026, "103032500149", true}, {2, 1, 2026, "103032540002", true}, {2, 1, 2026, "103032500146", true}, {2, 1, 2026, "103032500154", true},
+
+		// Tanggal 03 01 2026
+		{3, 1, 2026, "103032540004", true}, {3, 1, 2026, "103032540005", true}, {3, 1, 2026, "103032500177", true}, {3, 1, 2026, "103032500180", true}, {3, 1, 2026, "103032540001", false},
+		{3, 1, 2026, "103032500153", true}, {3, 1, 2026, "103032500149", true}, {3, 1, 2026, "103032540002", true}, {3, 1, 2026, "103032500146", true}, {3, 1, 2026, "103032500154", false},
+	}
+
+	for i, att := range dummyAttendances {
+		// Relational Lookup: Ambil nama secara dinamis dari studentData untuk menjaga integritas
+		var studentName string
+		for j := 0; j < *nS; j++ {
+			if studentData[j].NIS == att.nis {
+				studentName = studentData[j].Name
+				break
+			}
+		}
+
+		attendanceData[i] = Attendance{
+			Date:     Dates{Day: att.d, Month: att.m, Year: att.y},
+			NIS:      att.nis,
+			Name:     studentName,
+			Presence: att.pres,
+		}
+	}
+	*nA = len(dummyAttendances)
 }
 
 /*
@@ -462,11 +538,11 @@ func SearchStudentMenu(scanner *bufio.Scanner, nS *int) {
 		idx := BinarySearchStudent(keyword, 0, *nS-1)
 
 		if idx != -1 {
-			fmt.Println("\n=========================================")
-			fmt.Printf("| %-3s | %-13s | %-15s |\n", "NO", "NIS", "NAME")
-			fmt.Println("=========================================")
-			fmt.Printf("| %-3d | %-13s | %-15s |\n", 1, studentData[idx].NIS, studentData[idx].Name)
-			fmt.Println("=========================================")
+			fmt.Println("\n==============================================")
+			fmt.Printf("| %-3s | %-13s | %-20s |\n", "NO", "NIS", "NAME")
+			fmt.Println("==============================================")
+			fmt.Printf("| %-3d | %-13s | %-20s |\n", 1, studentData[idx].NIS, studentData[idx].Name)
+			fmt.Println("==============================================")
 			return
 		}
 	}
@@ -479,18 +555,18 @@ func SearchStudentMenu(scanner *bufio.Scanner, nS *int) {
 
 		if strings.Contains(currName, keyword) || strings.Contains(currNIS, keyword) {
 			if !found {
-				fmt.Println("\n=========================================")
-				fmt.Printf("| %-3s | %-13s | %-15s |\n", "NO", "NIS", "NAME")
-				fmt.Println("=========================================")
+				fmt.Println("\n==============================================")
+				fmt.Printf("| %-3s | %-13s | %-20s |\n", "NO", "NIS", "NAME")
+				fmt.Println("==============================================")
 				found = true
 			}
 			count++
-			fmt.Printf("| %-3d | %-13s | %-15s |\n", count, studentData[i].NIS, studentData[i].Name)
+			fmt.Printf("| %-3d | %-13s | %-20s |\n", count, studentData[i].NIS, studentData[i].Name)
 		}
 	}
 
 	if found {
-		fmt.Println("=========================================")
+		fmt.Println("==============================================")
 	} else {
 		fmt.Println("\n[!] Error: No student matches the keyword!")
 	}
@@ -563,13 +639,13 @@ func ShowStudentData(nS *int) {
 		fmt.Println("\n[!] Message: No student data available!")
 		return
 	}
-	fmt.Println("\n=========================================")
-	fmt.Printf("| %-3s | %-13s | %-15s |\n", "NO", "NIS", "NAME")
-	fmt.Println("=========================================")
+	fmt.Println("\n==============================================")
+	fmt.Printf("| %-3s | %-13s | %-20s |\n", "NO", "NIS", "NAME")
+	fmt.Println("==============================================")
 	for i := 0; i < *nS; i++ {
-		fmt.Printf("| %-3d | %-13s | %-15s |\n", i+1, studentData[i].NIS, studentData[i].Name)
+		fmt.Printf("| %-3d | %-13s | %-20s |\n", i+1, studentData[i].NIS, studentData[i].Name)
 	}
-	fmt.Println("=========================================")
+	fmt.Println("==============================================")
 }
 
 /*
@@ -779,7 +855,7 @@ func AddAttendance(scanner *bufio.Scanner, nS *int, nA *int) {
 		var pres bool
 
 		for !isValidInput {
-			fmt.Printf("[%d/%d] NIS: %-8s | Name: %-15s -> Present? (y/n): ", i+1, *nS, currentStudent.NIS, currentStudent.Name)
+			fmt.Printf("[%d/%d] NIS: %-8s | Name: %-20s -> Present? (y/n): ", i+1, *nS, currentStudent.NIS, currentStudent.Name)
 			if !scanner.Scan() {
 				return
 			}
@@ -992,9 +1068,9 @@ func SearchAttendance(scanner *bufio.Scanner, nA *int) {
 
 		if strings.Contains(dateStr, keyword) || strings.Contains(currNIS, keyword) || strings.Contains(currName, keyword) {
 			if !found {
-				fmt.Println("\n===========================================================")
-				fmt.Printf("| %-3s | %-10s | %-13s | %-15s | %-7s |\n", "NO", "DATE", "NIS", "NAME", "STATUS")
-				fmt.Println("===========================================================")
+				fmt.Println("\n=====================================================================")
+				fmt.Printf("| %-3s | %-10s | %-13s | %-20s | %-7s |\n", "NO", "DATE", "NIS", "NAME", "STATUS")
+				fmt.Println("=====================================================================")
 				found = true
 			}
 			count++
@@ -1002,12 +1078,12 @@ func SearchAttendance(scanner *bufio.Scanner, nA *int) {
 			if attendanceData[i].Presence {
 				pres = "PRESENT"
 			}
-			fmt.Printf("| %-3d | %-10s | %-13s | %-15s | %-7s |\n", count, dateStr, attendanceData[i].NIS, attendanceData[i].Name, pres)
+			fmt.Printf("| %-3d | %-10s | %-13s | %-20s | %-7s |\n", count, dateStr, attendanceData[i].NIS, attendanceData[i].Name, pres)
 		}
 	}
 
 	if found {
-		fmt.Println("===========================================================")
+		fmt.Println("=====================================================================")
 	} else {
 		fmt.Println("\n[!] Error: No attendance data matches the keyword!")
 	}
@@ -1170,18 +1246,18 @@ func ShowAttendance(nA *int) {
 		fmt.Println("\n[!] Message: No attendance data available.")
 		return
 	}
-	fmt.Println("\n===========================================================")
-	fmt.Printf("| %-3s | %-10s | %-13s | %-15s | %-7s |\n", "NO", "DATE", "NIS", "NAME", "STATUS")
-	fmt.Println("===========================================================")
+	fmt.Println("\n=====================================================================")
+	fmt.Printf("| %-3s | %-10s | %-13s | %-20s | %-7s |\n", "NO", "DATE", "NIS", "NAME", "STATUS")
+	fmt.Println("=====================================================================")
 	for i := 0; i < *nA; i++ {
 		dateStr := fmt.Sprintf("%02d/%02d/%d", attendanceData[i].Date.Day, attendanceData[i].Date.Month, attendanceData[i].Date.Year)
 		pres := "ABSENT"
 		if attendanceData[i].Presence {
 			pres = "PRESENT"
 		}
-		fmt.Printf("| %-3d | %-10s | %-13s | %-15s | %-7s |\n", i+1, dateStr, attendanceData[i].NIS, attendanceData[i].Name, pres)
+		fmt.Printf("| %-3d | %-10s | %-13s | %-20s | %-7s |\n", i+1, dateStr, attendanceData[i].NIS, attendanceData[i].Name, pres)
 	}
-	fmt.Println("===========================================================")
+	fmt.Println("=====================================================================")
 }
 
 // ==============================================================================
@@ -1275,7 +1351,7 @@ Initial State (I.S.): Struct variable is provided.
 Final State (F.S.): Displayed using left-aligned formatting.
 */
 func PrintStatsFormat(s Statistics) {
-	fmt.Printf("| %-13s | %-15s | %-3d/ %-3d | %-6.2f%% |\n", s.NIS, s.Name, s.TotalPresence, s.TotalMeetings, s.Percentage)
+	fmt.Printf("| %-13s | %-20s | %-3d/ %-3d | %-6.2f%% |\n", s.NIS, s.Name, s.TotalPresence, s.TotalMeetings, s.Percentage)
 }
 
 /*
@@ -1291,13 +1367,13 @@ func ShowStatsData(nS *int, nA *int) {
 		fmt.Println("\n[!] Message: No student data available to summarize!")
 		return
 	}
-	fmt.Println("\n=======================================================")
-	fmt.Printf("| %-13s | %-15s | %-7s | %-8s |\n", "NIS", "NAME", "PRS/MTG", "PERCENT")
-	fmt.Println("=======================================================")
+	fmt.Println("\n=============================================================")
+	fmt.Printf("| %-13s | %-20s | %-7s | %-8s |\n", "NIS", "NAME", "PRS/MTG", "PERCENT")
+	fmt.Println("=============================================================")
 	for i := 0; i < count; i++ {
 		PrintStatsFormat(stats[i])
 	}
-	fmt.Println("=======================================================")
+	fmt.Println("=============================================================")
 }
 
 /*
@@ -1332,9 +1408,9 @@ func SearchStats(scanner *bufio.Scanner, nS *int, nA *int) {
 
 		if strings.Contains(currNIS, keyword) || strings.Contains(currName, keyword) {
 			if !found {
-				fmt.Println("\n=======================================================")
-				fmt.Printf("| %-13s | %-15s | %-7s | %-8s |\n", "NIS", "NAME", "PRS/MTG", "PERCENT")
-				fmt.Println("=======================================================")
+				fmt.Println("\n=============================================================")
+				fmt.Printf("| %-13s | %-20s | %-7s | %-8s |\n", "NIS", "NAME", "PRS/MTG", "PERCENT")
+				fmt.Println("=============================================================")
 				found = true
 			}
 			PrintStatsFormat(stats[i])
@@ -1342,7 +1418,7 @@ func SearchStats(scanner *bufio.Scanner, nS *int, nA *int) {
 	}
 
 	if found {
-		fmt.Println("=======================================================")
+		fmt.Println("=============================================================")
 	} else {
 		fmt.Println("\n[!] Error: Statistics data not found for keyword!")
 	}
@@ -1493,11 +1569,11 @@ Initial State (I.S.): Parametric array is available.
 Final State (F.S.): Output is aligned and printed.
 */
 func ShowSortedStats(stats TabStatistics, count int) {
-	fmt.Println("\n=======================================================")
-	fmt.Printf("| %-13s | %-15s | %-7s | %-8s |\n", "NIS", "NAME", "PRS/MTG", "PERCENT")
-	fmt.Println("=======================================================")
+	fmt.Println("\n=============================================================")
+	fmt.Printf("| %-13s | %-20s | %-7s | %-8s |\n", "NIS", "NAME", "PRS/MTG", "PERCENT")
+	fmt.Println("=============================================================")
 	for i := 0; i < count; i++ {
 		PrintStatsFormat(stats[i])
 	}
-	fmt.Println("=======================================================")
+	fmt.Println("=============================================================")
 }
