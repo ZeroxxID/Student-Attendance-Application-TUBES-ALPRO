@@ -1370,6 +1370,7 @@ func ShowStatsData(nS *int, nA *int) {
 		fmt.Println("\n[!] Message: No student data available to summarize!")
 		return
 	}
+	SortStatsDesc(&stats, count, 3)
 	fmt.Println("\n=============================================================")
 	fmt.Printf("| %-13s | %-20s | %-7s | %-8s |\n", "NIS", "NAME", "PRS/MTG", "PERCENT")
 	fmt.Println("=============================================================")
