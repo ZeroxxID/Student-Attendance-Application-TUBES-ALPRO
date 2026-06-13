@@ -67,22 +67,22 @@ func main() {
 	var nAttendance int = 0
 
 	SeedDummyData(&nStudent, &nAttendance)
-	
+
 	scanner := bufio.NewScanner(os.Stdin)
 	MainMenu(scanner, &nStudent, &nAttendance)
 }
 
 // ==============================================================================
-// DUMMY DATA SEEDER (ENTERPRISE GRADE)
+// DUMMY DATA SEEDER
 // ==============================================================================
 
 /*
 Subprogram: SeedDummyData
-Description: Mengisi state awal aplikasi dengan data dummy secara langsung.
-             Menerapkan relational mapping untuk memastikan konsistensi data.
+Description: Fill the initial state of the application with dummy data directly.
+
+	Implement relational mapping to ensure data consistency.
 */
 func SeedDummyData(nS *int, nA *int) {
-	// 1. Deklarasi & Injeksi Data Student
 	dummyStudents := []Student{
 		{NIS: "103032540004", Name: "Elon Musk"},
 		{NIS: "103032540005", Name: "Barack Obama"},
@@ -93,7 +93,7 @@ func SeedDummyData(nS *int, nA *int) {
 		{NIS: "103032500149", Name: "Lionel Messi"},
 		{NIS: "103032540002", Name: "LeBron James"},
 		{NIS: "103032500146", Name: "Michael Jordan"},
-		{NIS: "103032500154", Name: "Bill Gates"}, // Dikoreksi typo menjadi "Bill Gates"
+		{NIS: "103032500154", Name: "Bill Gate"},
 	}
 
 	for i, s := range dummyStudents {
@@ -101,11 +101,8 @@ func SeedDummyData(nS *int, nA *int) {
 	}
 	*nS = len(dummyStudents)
 
-	// WAJIB: Sort ascending berdasarkan NIS agar BinarySearchStudent berfungsi normal
 	SortStudentAsc(1, nS)
 
-	// 2. Deklarasi & Injeksi Data Attendance
-	// Menggunakan struct helper anonim agar deklarasi rapi dan clean
 	type seedAtt struct {
 		d, m, y int
 		nis     string
@@ -127,7 +124,6 @@ func SeedDummyData(nS *int, nA *int) {
 	}
 
 	for i, att := range dummyAttendances {
-		// Relational Lookup: Ambil nama secara dinamis dari studentData untuk menjaga integritas
 		var studentName string
 		for j := 0; j < *nS; j++ {
 			if studentData[j].NIS == att.nis {
@@ -158,11 +154,12 @@ func MainMenu(scanner *bufio.Scanner, nS *int, nA *int) {
 		fmt.Println("\n==============================================")
 		fmt.Println("||          STUDENT ATTENDANCE APP          ||")
 		fmt.Println("==============================================")
-		fmt.Println("1. Student Menu")
-		fmt.Println("2. Attendance Menu")
-		fmt.Println("3. Statistics Menu")
-		fmt.Println("0. Exit")
-		fmt.Print("Choose menu: ")
+		fmt.Println("[1] Student Menu")
+		fmt.Println("[2] Attendance Menu")
+		fmt.Println("[3] Statistics Menu")
+		fmt.Println("[0] Exit")
+		fmt.Println("==============================================")
+		fmt.Print("Select option: ")
 
 		if !scanner.Scan() {
 			return
@@ -206,17 +203,18 @@ func StudentMenu(scanner *bufio.Scanner, nS *int, nA *int) bool {
 	inMenu := true
 	for inMenu {
 		fmt.Println("\n==============================================")
-		fmt.Println("                 STUDENT MENU                 ")
+		fmt.Println("||               STUDENT MENU               ||")
 		fmt.Println("==============================================")
-		fmt.Println("1. Back to Menu")
-		fmt.Println("2. Add Student")
-		fmt.Println("3. Edit Student")
-		fmt.Println("4. Delete Student")
-		fmt.Println("5. Search Student")
-		fmt.Println("6. Sort Student")
-		fmt.Println("7. Show Student Data")
-		fmt.Println("0. Exit")
-		fmt.Print("Choose menu: ")
+		fmt.Println("[1] Back to Menu")
+		fmt.Println("[2] Add Student")
+		fmt.Println("[3] Edit Student")
+		fmt.Println("[4] Delete Student")
+		fmt.Println("[5] Search Student")
+		fmt.Println("[6] Sort Student")
+		fmt.Println("[7] Show Student Data")
+		fmt.Println("[0] Exit")
+		fmt.Println("==============================================")
+		fmt.Print("Select option: ")
 
 		if !scanner.Scan() {
 			return true
@@ -583,15 +581,16 @@ func SortStudentMenu(scanner *bufio.Scanner, nS *int) bool {
 	inMenu := true
 	for inMenu {
 		fmt.Println("\n==============================================")
-		fmt.Println("              SORT STUDENT MENU               ")
+		fmt.Println("||            SORT STUDENT MENU             ||")
 		fmt.Println("==============================================")
-		fmt.Println("1. Ascending by NIS (Selection Sort)")
-		fmt.Println("2. Descending by NIS (Insertion Sort)")
-		fmt.Println("3. Ascending by Name (Selection Sort)")
-		fmt.Println("4. Descending by Name (Insertion Sort)")
-		fmt.Println("5. Back to Student Menu")
-		fmt.Println("0. Exit")
-		fmt.Print("Choose menu: ")
+		fmt.Println("[1] Ascending by NIS (Selection Sort)")
+		fmt.Println("[2] Descending by NIS (Insertion Sort)")
+		fmt.Println("[3] Ascending by Name (Selection Sort)")
+		fmt.Println("[4] Descending by Name (Insertion Sort)")
+		fmt.Println("[5] Back to Student Menu")
+		fmt.Println("[0] Exit")
+		fmt.Println("==============================================")
+		fmt.Print("Select option: ")
 
 		if !scanner.Scan() {
 			return true
@@ -755,17 +754,18 @@ func AttendanceMenu(scanner *bufio.Scanner, nS *int, nA *int) bool {
 	inMenu := true
 	for inMenu {
 		fmt.Println("\n==============================================")
-		fmt.Println("               ATTENDANCE MENU                ")
+		fmt.Println("||             ATTENDANCE MENU              ||")
 		fmt.Println("==============================================")
-		fmt.Println("1. Back to Menu")
-		fmt.Println("2. Add Student Attendance")
-		fmt.Println("3. Edit Student Attendance")
-		fmt.Println("4. Delete Student Attendance")
-		fmt.Println("5. Search Student Attendance")
-		fmt.Println("6. Sort Student Attendance")
-		fmt.Println("7. Show Student Attendance")
-		fmt.Println("0. Exit")
-		fmt.Print("Choose menu: ")
+		fmt.Println("[1] Back to Menu")
+		fmt.Println("[2] Add Student Attendance")
+		fmt.Println("[3] Edit Student Attendance")
+		fmt.Println("[4] Delete Student Attendance")
+		fmt.Println("[5] Search Student Attendance")
+		fmt.Println("[6] Sort Student Attendance")
+		fmt.Println("[7] Show Student Attendance")
+		fmt.Println("[0] Exit")
+		fmt.Println("==============================================")
+		fmt.Print("Select option: ")
 
 		if !scanner.Scan() {
 			return true
@@ -804,8 +804,9 @@ Subprogram: AddAttendance
 Description: Records attendance for ALL registered students simultaneously for a single validated date.
 Parameters: scanner (*bufio.Scanner), nS (*int), nA (*int)
 Initial State (I.S.): Student data array contains *nS elements.
-Final State (F.S.): Prompts for a single date, validates it, then iterates through all *nS students 
-                     to record presence. nA increments by the total number of students processed.
+Final State (F.S.): Prompts for a single date, validates it, then iterates through all *nS students
+
+	to record presence. nA increments by the total number of students processed.
 */
 func AddAttendance(scanner *bufio.Scanner, nS *int, nA *int) {
 	if *nS == 0 {
@@ -848,7 +849,7 @@ func AddAttendance(scanner *bufio.Scanner, nS *int, nA *int) {
 	}
 
 	fmt.Println("\n--- RECORDING ATTENDANCE FOR ALL STUDENTS ---")
-	
+
 	for i := 0; i < *nS; i++ {
 		currentStudent := studentData[i]
 		isValidInput := false
@@ -860,7 +861,7 @@ func AddAttendance(scanner *bufio.Scanner, nS *int, nA *int) {
 				return
 			}
 			presStr := strings.ToLower(strings.TrimSpace(scanner.Text()))
-			
+
 			switch presStr {
 			case "y":
 				pres = true
@@ -1100,17 +1101,18 @@ func SortAttendanceMenu(scanner *bufio.Scanner, nA *int) bool {
 	inMenu := true
 	for inMenu {
 		fmt.Println("\n==============================================")
-		fmt.Println("            SORT ATTENDANCE MENU              ")
+		fmt.Println("||          SORT ATTENDANCE MENU            ||")
 		fmt.Println("==============================================")
-		fmt.Println("1. Ascending by Date (Selection Sort)")
-		fmt.Println("2. Descending by Date (Insertion Sort)")
-		fmt.Println("3. Ascending by NIS (Selection Sort)")
-		fmt.Println("4. Descending by NIS (Insertion Sort)")
-		fmt.Println("5. Ascending by Name (Selection Sort)")
-		fmt.Println("6. Descending by Name (Insertion Sort)")
-		fmt.Println("7. Back to Attendance Menu")
-		fmt.Println("0. Exit")
-		fmt.Print("Choose menu: ")
+		fmt.Println("[1] Ascending by Date (Selection Sort)")
+		fmt.Println("[2] Descending by Date (Insertion Sort)")
+		fmt.Println("[3] Ascending by NIS (Selection Sort)")
+		fmt.Println("[4] Descending by NIS (Insertion Sort)")
+		fmt.Println("[5] Ascending by Name (Selection Sort)")
+		fmt.Println("[6] Descending by Name (Insertion Sort)")
+		fmt.Println("[7] Back to Attendance Menu")
+		fmt.Println("[0] Exit")
+		fmt.Println("==============================================")
+		fmt.Print("Select option: ")
 
 		if !scanner.Scan() {
 			return true
@@ -1275,14 +1277,15 @@ func StatisticsMenu(scanner *bufio.Scanner, nS *int, nA *int) bool {
 	inMenu := true
 	for inMenu {
 		fmt.Println("\n==============================================")
-		fmt.Println("               STATISTICS MENU                ")
+		fmt.Println("||             STATISTICS MENU              ||")
 		fmt.Println("==============================================")
-		fmt.Println("1. Back to Menu")
-		fmt.Println("2. Show Student Statistics")
-		fmt.Println("3. Search Student Statistic")
-		fmt.Println("4. Sort Student Statistic")
-		fmt.Println("0. Exit")
-		fmt.Print("Choose menu: ")
+		fmt.Println("[1] Back to Menu")
+		fmt.Println("[2] Show Student Statistics")
+		fmt.Println("[3] Search Student Statistic")
+		fmt.Println("[4] Sort Student Statistic")
+		fmt.Println("[0] Exit")
+		fmt.Println("==============================================")
+		fmt.Print("Select option: ")
 
 		if !scanner.Scan() {
 			return true
@@ -1435,17 +1438,18 @@ func SortStatsMenu(scanner *bufio.Scanner, nS *int, nA *int) bool {
 	inMenu := true
 	for inMenu {
 		fmt.Println("\n==============================================")
-		fmt.Println("             SORT STATISTICS MENU             ")
+		fmt.Println("||           SORT STATISTICS MENU           ||")
 		fmt.Println("==============================================")
-		fmt.Println("1. Ascending by NIS (Selection Sort)")
-		fmt.Println("2. Descending by NIS (Insertion Sort)")
-		fmt.Println("3. Ascending by Name (Selection Sort)")
-		fmt.Println("4. Descending by Name (Insertion Sort)")
-		fmt.Println("5. Ascending by Percentage (Selection Sort)")
-		fmt.Println("6. Descending by Percentage (Insertion Sort)")
-		fmt.Println("7. Back to Statistics Menu")
-		fmt.Println("0. Exit")
-		fmt.Print("Choose menu: ")
+		fmt.Println("[1] Ascending by NIS (Selection Sort)")
+		fmt.Println("[2] Descending by NIS (Insertion Sort)")
+		fmt.Println("[3] Ascending by Name (Selection Sort)")
+		fmt.Println("[4] Descending by Name (Insertion Sort)")
+		fmt.Println("[5] Ascending by Percentage (Selection Sort)")
+		fmt.Println("[6] Descending by Percentage (Insertion Sort)")
+		fmt.Println("[7] Back to Statistics Menu")
+		fmt.Println("[0] Exit")
+		fmt.Println("==============================================")
+		fmt.Print("Select option: ")
 
 		if !scanner.Scan() {
 			return true
